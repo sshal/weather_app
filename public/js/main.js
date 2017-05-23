@@ -20802,11 +20802,11 @@ module.exports = traverseAllChildren;
 module.exports = require('./lib/React');
 
 },{"./lib/React":158}],182:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -20818,30 +20818,152 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Comp = function (_React$Component) {
-    _inherits(Comp, _React$Component);
+var WeatherApp = function (_React$Component) {
+    _inherits(WeatherApp, _React$Component);
 
-    function Comp(props) {
-        _classCallCheck(this, Comp);
+    function WeatherApp(props) {
+        _classCallCheck(this, WeatherApp);
 
-        return _possibleConstructorReturn(this, (Comp.__proto__ || Object.getPrototypeOf(Comp)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (WeatherApp.__proto__ || Object.getPrototypeOf(WeatherApp)).call(this, props));
+
+        _this.getCoordinates = _this.getCoordinates.bind(_this);
+        _this.getWeather = _this.getWeather.bind(_this);
+        _this.convert = _this.convert.bind(_this);
+        _this.loc = { lati: _this.props.lat, long: _this.props.lon };
+        _this.icons = {
+            "Clear": "<img src='https://image.ibb.co/kUGTVv/clear.png' alt='clear'/>",
+            "Clouds": "<img src='https://image.ibb.co/cjphqv/clouds.png' alt='clouds'/>",
+            "Drizzle": "<img src='https://image.ibb.co/f6yLca/drizzle.png' alt='drizzle'/>",
+            "Snow": "<img src='https://image.ibb.co/han2qv/snow.png' alt='snow'/>",
+            "Fewclouds": "<img src='https://image.ibb.co/hRiaAv/fewclouds.png' alt='fewclouds'/>",
+            "Thunderstorm": "<img src='https://image.ibb.co/myu43F/thunderstorm.png' alt='storm'/>",
+            "Rain": "<img src='https://image.ibb.co/cZ3aAv/rain.png' alt='rain'/>"
+        };
+        _this.city = "Click the buttons!";
+        _this.tCe = "";
+        _this.tFa = "";
+        _this.tempC = true;
+        _this.wind = "";
+        return _this;
     }
 
-    _createClass(Comp, [{
-        key: 'render',
+    _createClass(WeatherApp, [{
+        key: "getCoordinates",
+        value: function getCoordinates() {
+            var show = function (position) {
+                this.loc.lati = position.coords.latitude.toFixed(6);
+                this.loc.long = position.coords.longitude.toFixed(6);
+                this.setState({});
+            }.bind(this);
+            navigator.geolocation.getCurrentPosition(show);
+            setTimeout(this.getWeather, 2000);
+        }
+    }, {
+        key: "getWeather",
+        value: function getWeather() {
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (req.readyState == 4 && req.status == 200) {
+                    var result = JSON.parse(req.response),
+                        icons = Object.keys(this.icons),
+                        weather = result.weather[0].main,
+                        image;
+                    this.city = result.name + ", " + result.sys.country;
+                    this.tCe = Math.round(result.main.temp - 273.15);
+                    this.tFa = Math.round(this.tCe * 9 / 5 + 32);
+                    this.wind = result.wind.speed + " m/s";
+                    if (result.weather[0].description === "few clouds") {
+                        image = this.icons["Fewclouds"];
+                    } else if (weather === "Rain" && result.weather[0].description !== "light rain") {
+                        image = this.icons["Drizzle"];
+                    } else if (icons.includes(weather)) {
+                        image = this.icons[weather];
+                    } else {
+                        image = this.icons["Clouds"];
+                    }
+                    document.getElementById('icon').innerHTML = image;
+                    this.setState({});
+                }
+            }.bind(this);
+            if (this.loc.lati) {
+                req.open("POST", "http://api.openweathermap.org/data/2.5/weather?lat=" + this.loc.lati + "&lon=" + this.loc.long + "&APPID=3b14e14e1d53bf4337abe31433667172", true);
+            } else {
+                req.open("POST", "http://api.openweathermap.org/data/2.5/weather?q=London&APPID=3b14e14e1d53bf4337abe31433667172", true);
+            }
+            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            req.setRequestHeader("Accept", "application/json");
+            req.send();
+            this.setState({});
+        }
+    }, {
+        key: "convert",
+        value: function convert() {
+            if (this.tempC) {
+                this.tempC = false;
+                document.getElementById('sym').innerHTML = "&#176;F";
+            } else {
+                this.tempC = true;
+                document.getElementById('sym').innerHTML = "&#176;C";
+            }
+            this.setState({});
+        }
+    }, {
+        key: "render",
         value: function render() {
+            var tempr;
+            tempr = this.tempC ? this.tCe : this.tFa;
             return _react2.default.createElement(
-                'div',
+                "div",
                 null,
-                'Example'
+                _react2.default.createElement(
+                    "h2",
+                    null,
+                    "Weather App"
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { className: "city" },
+                    this.city
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { id: "temper", onClick: this.convert },
+                    tempr,
+                    _react2.default.createElement(
+                        "span",
+                        { id: "sym" },
+                        "\xB0C"
+                    )
+                ),
+                _react2.default.createElement(
+                    "p",
+                    { className: "wind" },
+                    "wind: ",
+                    this.wind
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { id: "icon" },
+                    _react2.default.createElement("img", { src: "https://image.ibb.co/kUGTVv/clear.png", alt: "clear" })
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.getWeather, className: "wea" },
+                    "Weather"
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.getCoordinates, className: "coor" },
+                    "My place"
+                )
             );
         }
     }]);
 
-    return Comp;
+    return WeatherApp;
 }(_react2.default.Component);
 
-module.exports = Comp;
+module.exports = WeatherApp;
 
 },{"react":181}],183:[function(require,module,exports){
 'use strict';
@@ -20854,12 +20976,27 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _Comp = require('./components/Comp.jsx');
+var _WeatherApp = require('./components/WeatherApp.jsx');
 
-var _Comp2 = _interopRequireDefault(_Comp);
+var _WeatherApp2 = _interopRequireDefault(_WeatherApp);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_Comp2.default, null), document.getElementById('main'));
+(function startApp() {
+    var lat, lon;
+    var findCity = new XMLHttpRequest();
+    findCity.open("GET", "http://ip-api.com/json", true);
+    findCity.onreadystatechange = function () {
+        if (findCity.readyState == 4 && findCity.status === 200) {
+            var res = JSON.parse(findCity.response);
+            lat = res.lat;
+            lon = res.lon;
+        }
+    };
+    findCity.send();
+    setTimeout(function () {
+        _reactDom2.default.render(_react2.default.createElement(_WeatherApp2.default, { lat: lat, lon: lon }), document.getElementById('main'));;
+    }, 1000);
+})();
 
-},{"./components/Comp.jsx":182,"react":181,"react-dom":30}]},{},[183]);
+},{"./components/WeatherApp.jsx":182,"react":181,"react-dom":30}]},{},[183]);

@@ -1,0 +1,68 @@
+* {
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    font-size: 30px;
+}
+button {
+    outline: none;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px;
+    color: white;
+    font-family: 'Metamorphous', cursive;
+}
+#main {
+    margin-top: 10px;
+    width: 310px;
+    background: #080808;
+    color: white;
+    box-shadow: 0 0 5px 5px grey;
+    border-radius: 20%;
+}
+#icon {
+    width: 170px;
+    height: 110px;
+}
+h2 {
+    padding: 20px;
+    font-family: 'Bungee Inline', cursive;
+    color: rgb(252, 239, 0);
+    opacity: 0.8;
+}
+.city {
+    font-family: 'Trocchi', serif;
+}
+#temper, #sym {
+    font-family: 'Rye', cursive;
+    padding: 10px;
+    color: orange;
+}
+#sym {
+    color: brown;
+}
+.wind {
+    font-size: 22px;
+    font-family: 'Mystery Quest', cursive;
+    color: #1E90FF;
+}
+#sym:hover {
+    cursor: pointer;
+    color: grey;
+}
+.wea {
+    background: green;
+    box-shadow: 0 0 3px 1px green;
+}
+.coor {
+    background: #CD5C5C;
+    box-shadow: 0 0 3px 1px #CD5C5C;
+}
+.wea:hover, .coor:hover {
+    cursor: pointer;
+    background: white;
+    color: black;
+    box-shadow: 0 0 5px 2px white;
+}
